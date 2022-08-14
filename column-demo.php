@@ -119,6 +119,18 @@ function coldemo_filter(){
 }
 add_action( 'restrict_manage_posts', 'coldemo_filter' );
 
+function coldemo_filter_data( $wpquery ) {
+	if ( ! is_admin() ) {
+		return;
+	}
 
+	$filter_value = isset( $_GET['DEMOFILTER'] ) ? $_GET['DEMOFILTER'] : '' ;
+	if ( '1' == $filter_value ) {
+		$wpquery->set( 'post__in', array( 46, 41, 64 ) );
+	} else if ( '2' == $filter_value ) {
+		$wpquery->set( 'post__in', array( 66, 32, 53 ) );
+	}
+}
 
+add_action( 'pre_get_posts', 'coldemo_filter_data' );
 
