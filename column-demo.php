@@ -93,6 +93,7 @@ function coldemo_update_wordcount_on_post_save( $post_id ) {
 }
 add_action( 'save_post', 'coldemo_update_wordcount_on_post_save' );
 
+// Start Filter
 function coldemo_filter(){
 	if ( isset( $_GET['post_type'] ) && $_GET['post_type'] != 'post' ) {
 		return;
@@ -133,4 +134,58 @@ function coldemo_filter_data( $wpquery ) {
 }
 
 add_action( 'pre_get_posts', 'coldemo_filter_data' );
+// End Filter
+
+// Start Thumbnail Filter
+function coldemo_thumbanil_filter(){
+	if ( isset( $_GET['post_type'] ) && $_GET['post_type'] != 'post' ) {
+		return;
+	}
+
+	$filter_value 	= isset( $_GET['THFILTER'] ) ? $_GET['THFILTER'] : '' ;
+	$values 		= array(
+		'0' => __( 'Select Thumbnail', 'column-demo' ),
+		'1' => __( 'Has Thumbnail', 'column-demo' ),
+		'2' => __( 'No Thumbnail', 'column-demo' )
+	);
+	?>
+	<select name="THFILTER">
+		<?php
+		foreach ( $values as $key => $value ){
+			printf( "<option value='%s' %s>%s</option>", $key,
+				$key == $filter_value ? "selected = 'selected'" : '',
+				$value
+			);
+		}
+		?>
+	</select>
+	<?php
+}
+add_action( 'restrict_manage_posts', 'coldemo_thumbanil_filter' );
+
+function coldemo_thumbnail_filter_data( $wpquery ) {
+	if ( ! is_admin() ) {
+		return;
+	}
+
+	$filter_value = isset( $_GET['THFILTER'] ) ? $_GET['THFILTER'] : '' ;
+	if ( '1' == $filter_value ) {
+		$wpquery->set( 'meta_query', array(
+			array(
+				'key'		=> '_thumbnail_id',
+				'compare'	=> 'EXISTS'
+			)
+		) );
+	} else if ( '2' == $filter_value ) {
+		$wpquery->set( 'meta_query', array( 
+			array (
+				'key'		=> '_thumbnail_id',
+				'compare'	=> 'NOT EXISTS'
+			)
+		) );
+	}
+}
+
+add_action( 'pre_get_posts', 'coldemo_thumbnail_filter_data' );
+// End Thumbnail Filter
 
