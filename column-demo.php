@@ -189,5 +189,6 @@ function coldemo_thumbnail_filter_data( $wpquery ) {
 }
 
 add_action( 'pre_get_posts', 'coldemo_thumbnail_filter_data' );
-// End Thumbnail Filter
+// End Thumbnail Filter 
+// End Thumbnail Filter 
 
