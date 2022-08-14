@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:       Column Demo test
+ * Plugin Name:       Column Demo 
  * Plugin URI:        https://example.com/plugins/
  * Description:       This is practise plugin.
  * Version:           1.0
@@ -40,9 +40,10 @@ function coldemo_post_column_data( $column, $post_id ) {
 		$thumbnail = get_the_post_thumbnail( $post_id, array(100, 100) );
 		echo $thumbnail;
 	} elseif ( 'wordcount' == $column ) {
-		$_post = get_post($post_id);
-		$content = $_post->post_content;
-		$wordn = str_word_count(strip_tags($content));
+		// $_post = get_post($post_id);
+		// $content = $_post->post_content;
+		// $wordn = str_word_count(strip_tags($content));
+		$wordn = get_post_meta( $post_id, 'wordn', true );
 		echo $wordn;
 	}
 }
@@ -56,14 +57,43 @@ function coldemo_sortable_column($columns){
 }
 add_filter( 'manage_edit-post_sortable_columns', 'coldemo_sortable_column' );
  
-function coldemo_set_word_count(){
-	$_posts = get_posts(array(
-		'posts_per_page' => -1,
-		'post_type' => 'post'
-	));
-}
-add_action( 'init', 'coldemo_set_word_count' );
+// function coldemo_set_word_count(){
+// 	$_posts = get_posts(array(
+// 		'posts_per_page' => -1,
+// 		'post_type' => 'post',
+// 		'post_status' => 'any'
+// 	));
 
-// test  test test
+// 	foreach ( $_posts as $p ) {
+// 		$content = $p->post_content;
+// 		$wordn = str_word_count(strip_tags($content));
+// 		update_post_meta( $p->ID, 'wordn', $wordn );
+// 	}
+// }
+// add_action( 'init', 'coldemo_set_word_count' );
+
+function coldemo_sort_column_data( $wpquery ) {
+	if( !is_admin() ) {
+		return;
+	}
+
+	$orderby = $wpquery->get('orderby');
+	if( 'wordn' == $orderby ) {
+		$wpquery->set( 'meta_key', 'wordn' );
+		$wpquery->set( 'orderby', 'meta_value_num' );
+	}
+}
+add_action( 'pre_get_posts', 'coldemo_sort_column_data' );
+
+function coldemo_update_wordcount_on_post_save( $post_id ) {
+	$p = get_post($post_id);
+	$content = $p->post_content;
+	$wordn = str_word_count( strip_tags( $content ) );
+	update_post_meta( $p-ID, 'wordn', $wordn );
+}
+add_action( 'save_post', 'coldemo_update_wordcount_on_post_save' );
+
+
+
 
 
