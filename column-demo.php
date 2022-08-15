@@ -196,14 +196,15 @@ function coldemo_wordcount_filter() {
 	if ( isset( $_GET['post_type'] ) && $_GET['post_type'] != 'post' ) { //display only on posts page
 		return;
 	}
-	$filter_value = isset( $_GET['THFILTER'] ) ? $_GET['THFILTER'] : '';
+	$filter_value = isset( $_GET['WCFILTER'] ) ? $_GET['WCFILTER'] : '';
 	$values       = array(
-		'0' => __( 'Thumbnail Status', 'column_demo' ),
-		'1' => __( 'Has Thumbnail', 'column_demo' ),
-		'2' => __( 'No Thumbnail', 'column_demo' ),
+		'0' => __( 'Word Count', 'column_demo' ),
+		'1' => __( 'Avobe 400 ', 'column_demo' ),
+		'2' => __( '200 to 400', 'column_demo' ),
+		'3' => __( 'Below 200', 'column_demo' ),
 	);
 	?>
-    <select name="THFILTER">
+    <select name="WCFILTER">
 		<?php
 		foreach ( $values as $key => $value ) {
 			printf( "<option value='%s' %s>%s</option>", $key,
@@ -223,24 +224,36 @@ function coldemo_wordcount_filter_data( $wpquery ) {
 		return;
 	}
 
-	$filter_value = isset( $_GET['THFILTER'] ) ? $_GET['THFILTER'] : '';
+	$filter_value = isset( $_GET['WCFILTER'] ) ? $_GET['WCFILTER'] : '';
+	
 	if ( '1' == $filter_value ) {
 		$wpquery->set( 'meta_query', array(
 			array(
-				'key'     => '_thumbnail_id',
-				'compare' => 'EXISTS'
+				'key'    	=> 'wordn',
+				'value'     => 400,
+				'compare' 	=> '>=',
+				'type' 		=> 'NUMERIC'
 			)
 		) );
 	} else if ( '2' == $filter_value ) {
 		$wpquery->set( 'meta_query', array(
 			array(
-				'key'     => '_thumbnail_id',
-				'compare' => 'NOT EXISTS'
+				'key'    	=> 'wordn',
+				'value'     => array(200,400),
+				'compare' 	=> 'BETWEEN',
+				'type' 		=> 'NUMERIC'
+			)
+		) );
+	} else if ( '3' == $filter_value ) {
+		$wpquery->set( 'meta_query', array(
+			array(
+				'key'    	=> 'wordn',
+				'value'     => 200,
+				'compare' 	=> '<=',
+				'type' 		=> 'NUMERIC'
 			)
 		) );
 	}
-
-
 }
 
 add_action( 'pre_get_posts', 'coldemo_wordcount_filter_data' );
