@@ -225,7 +225,7 @@ function coldemo_wordcount_filter_data( $wpquery ) {
 	}
 
 	$filter_value = isset( $_GET['WCFILTER'] ) ? $_GET['WCFILTER'] : '';
-	
+
 	if ( '1' == $filter_value ) {
 		$wpquery->set( 'meta_query', array(
 			array(
@@ -257,6 +257,6 @@ function coldemo_wordcount_filter_data( $wpquery ) {
 }
 
 add_action( 'pre_get_posts', 'coldemo_wordcount_filter_data' );
-// End WordCount Filter 
+// End WordCount Filter Filter 
 
 
