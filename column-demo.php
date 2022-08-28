@@ -89,7 +89,7 @@ function coldemo_update_wordcount_on_post_save( $post_id ) {
 	$p = get_post($post_id);
 	$content = $p->post_content;
 	$wordn = str_word_count( strip_tags( $content ) );
-	update_post_meta( $p-ID, 'wordn', $wordn );
+	update_post_meta( $p->ID, 'wordn', $wordn );
 }
 add_action( 'save_post', 'coldemo_update_wordcount_on_post_save' );
 
